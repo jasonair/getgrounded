@@ -1,4 +1,8 @@
 // Firebase configuration
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD-ez1DM8kB7DTMmyAibGf-tliEi81yb0I",
   authDomain: "grounded-7832a.firebaseapp.com",
@@ -6,22 +10,13 @@ const firebaseConfig = {
   storageBucket: "grounded-7832a.firebasestorage.app",
   messagingSenderId: "546799366765",
   appId: "1:546799366765:web:6e25af929a86b24751c564",
-  measurementId: "G-MSNE0YT0GY",
 };
-// Initialize Firebase - using the correct global objects for v10.5.0 standalone SDK
+
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// For debugging purposes
-console.log(
-  "Available Firebase globals:",
-  Object.keys(window).filter(
-    (key) => key.includes("firebase") || key.includes("Fire")
-  )
-);
-
-// Initialize Firestore
-const db = firebase.firestore();
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
 
 // Navigation menu for mobile
 function showMenu() {
@@ -83,7 +78,7 @@ const successModal = document.getElementById("success-modal");
 const closeBtn = document.querySelector(".close");
 const closeModalBtn = document.getElementById("close-modal");
 
-waitlistForm.addEventListener("submit", function (e) {
+waitlistForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   // Get form data
@@ -101,26 +96,22 @@ waitlistForm.addEventListener("submit", function (e) {
     Habit: formDataObj.interest,
   };
 
-  // Send data to Firestore "grounded" collection with document ID "signup"
-  // Use the db object directly (which is window.firestore)
-  db.collection("grounded")
-    .doc("signup")
-    .set(signupData)
-    .then(() => {
-      console.log("Document successfully written to 'grounded/signup'");
+  try {
+    // Send data to Firestore "grounded" collection
+    const docRef = await addDoc(collection(db, "grounded"), signupData);
+    console.log("Document written with ID: ", docRef.id);
 
-      // Show success modal
-      successModal.style.display = "flex";
+    // Show success modal
+    successModal.style.display = "flex";
 
-      // Reset the form
-      waitlistForm.reset();
-    })
-    .catch((error) => {
-      console.error("Error writing document: ", error);
+    // Reset the form
+    waitlistForm.reset();
+  } catch (error) {
+    console.error("Error adding document: ", error);
 
-      // Optionally, show an error modal or message
-      alert("There was an error submitting your form. Please try again later.");
-    });
+    // Optionally, show an error modal or message
+    alert("There was an error submitting your form. Please try again later.");
+  }
 });
 
 // Close modal when clicking the X
