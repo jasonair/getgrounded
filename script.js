@@ -8,12 +8,18 @@ const firebaseConfig = {
   appId: "1:546799366765:web:6e25af929a86b24751c564",
   measurementId: "G-MSNE0YT0GY",
 };
+// Initialize Firebase - using the correct global objects for v10.5.0 standalone SDK
+// For debugging purposes
+console.log(
+  "Available Firebase globals:",
+  Object.keys(window).filter(
+    (key) => key.includes("firebase") || key.includes("Fire")
+  )
+);
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-
-// Initialize Firestore
-const db = firestore.getFirestore(app);
+// Initialize Firestore directly
+// Use the global firestore object provided by the standalone SDK
+const db = window.firestore;
 
 // Navigation menu for mobile
 function showMenu() {
@@ -94,9 +100,10 @@ waitlistForm.addEventListener("submit", function (e) {
   };
 
   // Send data to Firestore "grounded" collection with document ID "signup"
-  const docRef = firestore.doc(db, "grounded", "signup");
-  firestore
-    .setDoc(docRef, signupData)
+  // Use the db object directly (which is window.firestore)
+  db.collection("grounded")
+    .doc("signup")
+    .set(signupData)
     .then(() => {
       console.log("Document successfully written to 'grounded/signup'");
 
