@@ -1,22 +1,9 @@
 // Firebase configuration
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+// Using the Firebase compatibility version loaded via CDN in index.html
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD-ez1DM8kB7DTMmyAibGf-tliEi81yb0I",
-  authDomain: "grounded-7832a.firebaseapp.com",
-  projectId: "grounded-7832a",
-  storageBucket: "grounded-7832a.firebasestorage.app",
-  messagingSenderId: "546799366765",
-  appId: "1:546799366765:web:6e25af929a86b24751c564",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
+// Firebase is initialized in the index.html file
+// Get a reference to Firestore
+const db = firebase.firestore();
 
 // Navigation menu for mobile
 function showMenu() {
@@ -78,7 +65,7 @@ const successModal = document.getElementById("success-modal");
 const closeBtn = document.querySelector(".close");
 const closeModalBtn = document.getElementById("close-modal");
 
-waitlistForm.addEventListener("submit", async function (e) {
+waitlistForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
   // Get form data
@@ -96,22 +83,24 @@ waitlistForm.addEventListener("submit", async function (e) {
     Habit: formDataObj.interest,
   };
 
-  try {
-    // Send data to Firestore "grounded" collection
-    const docRef = await addDoc(collection(db, "grounded"), signupData);
-    console.log("Document written with ID: ", docRef.id);
+  // Add a new document to the "grounded" collection
+  db.collection("grounded")
+    .add(signupData)
+    .then((docRef) => {
+      console.log("Document written with ID: ", docRef.id);
 
-    // Show success modal
-    successModal.style.display = "flex";
+      // Show success modal
+      successModal.style.display = "flex";
 
-    // Reset the form
-    waitlistForm.reset();
-  } catch (error) {
-    console.error("Error adding document: ", error);
+      // Reset the form
+      waitlistForm.reset();
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
 
-    // Optionally, show an error modal or message
-    alert("There was an error submitting your form. Please try again later.");
-  }
+      // Optionally, show an error modal or message
+      alert("There was an error submitting your form. Please try again later.");
+    });
 });
 
 // Close modal when clicking the X
