@@ -86,11 +86,19 @@ waitlistForm.addEventListener("submit", function (e) {
     formDataObj[key] = value;
   });
 
-  // Send data to Firestore
-  db.collection("waitlist")
-    .add(formDataObj)
-    .then((docRef) => {
-      console.log("Document written with ID: ", docRef.id);
+  // Map form data to match the required fields in the "signup" document
+  const signupData = {
+    Name: formDataObj.name,
+    Email: formDataObj.email,
+    Habit: formDataObj.interest,
+  };
+
+  // Send data to Firestore "grounded" collection with document ID "signup"
+  db.collection("grounded")
+    .doc("signup")
+    .set(signupData)
+    .then(() => {
+      console.log("Document successfully written to 'grounded/signup'");
 
       // Show success modal
       successModal.style.display = "flex";
@@ -99,7 +107,7 @@ waitlistForm.addEventListener("submit", function (e) {
       waitlistForm.reset();
     })
     .catch((error) => {
-      console.error("Error adding document: ", error);
+      console.error("Error writing document: ", error);
 
       // Optionally, show an error modal or message
       alert("There was an error submitting your form. Please try again later.");
