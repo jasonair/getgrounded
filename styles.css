@@ -719,9 +719,9 @@ footer {
     position: fixed;
     background: var(--dark-color);
     height: 100vh;
-    width: 200px;
+    width: 250px;
     top: 0;
-    right: -200px;
+    right: -250px;
     text-align: left;
     z-index: 2;
     transition: 0.5s;
@@ -851,5 +851,114 @@ h3,
   section#features .feature:hover h3 {
     color: #ffc107 !important; /* Yellow color */
     transition: none !important; /* Disable transitions that might be interfering */
+  }
+}
+
+/* Cookie Consent Popup */
+.cookie-consent {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  z-index: 1000;
+  font-size: 14px;
+  display: none;
+  border-top: 4px solid var(--primary-color);
+}
+
+.cookie-consent h3 {
+  margin-top: 0;
+  color: var(--dark-color);
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.cookie-consent p {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.cookie-consent-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cookie-btn {
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+  border: none;
+}
+
+.cookie-btn-accept {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.cookie-btn-accept:hover {
+  background-color: #2d9d61;
+}
+
+.cookie-btn-settings {
+  background-color: #f1f1f1;
+  color: var(--dark-color);
+}
+
+.cookie-btn-settings:hover {
+  background-color: #e0e0e0;
+}
+
+.cookie-settings-panel {
+  display: none;
+  margin-top: 15px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.cookie-settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cookie-settings-option label {
+  flex-grow: 1;
+}
+
+.cookie-settings-option input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.cookie-settings-option.necessary input[type="checkbox"] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cookie-settings-save {
+  width: 100%;
+  margin-top: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.cookie-settings-save:hover {
+  background-color: #2d9d61;
+}
+
+@media (max-width: 700px) {
+  .cookie-consent {
+    width: calc(100% - 40px);
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
   }
 }
