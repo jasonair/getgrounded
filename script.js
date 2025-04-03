@@ -1,3 +1,20 @@
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD-ez1DM8kB7DTMmyAibGf-tliEi81yb0I",
+  authDomain: "grounded-7832a.firebaseapp.com",
+  projectId: "grounded-7832a",
+  storageBucket: "grounded-7832a.firebasestorage.app",
+  messagingSenderId: "546799366765",
+  appId: "1:546799366765:web:6e25af929a86b24751c564",
+  measurementId: "G-MSNE0YT0GY",
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const db = firebase.firestore();
+
 // Navigation menu for mobile
 function showMenu() {
   document.getElementById("navLinks").style.right = "0";
@@ -69,14 +86,24 @@ waitlistForm.addEventListener("submit", function (e) {
     formDataObj[key] = value;
   });
 
-  // In a real implementation, you would send this data to your server or email service
-  console.log("Form submitted with data:", formDataObj);
+  // Send data to Firestore
+  db.collection("waitlist")
+    .add(formDataObj)
+    .then((docRef) => {
+      console.log("Document written with ID: ", docRef.id);
 
-  // For demo purposes, we'll just show the success modal
-  successModal.style.display = "flex";
+      // Show success modal
+      successModal.style.display = "flex";
 
-  // Reset the form
-  waitlistForm.reset();
+      // Reset the form
+      waitlistForm.reset();
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+
+      // Optionally, show an error modal or message
+      alert("There was an error submitting your form. Please try again later.");
+    });
 });
 
 // Close modal when clicking the X
