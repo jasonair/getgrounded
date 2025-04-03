@@ -9,6 +9,9 @@ const firebaseConfig = {
   measurementId: "G-MSNE0YT0GY",
 };
 // Initialize Firebase - using the correct global objects for v10.5.0 standalone SDK
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
 // For debugging purposes
 console.log(
   "Available Firebase globals:",
@@ -17,9 +20,8 @@ console.log(
   )
 );
 
-// Initialize Firestore directly
-// Use the global firestore object provided by the standalone SDK
-const db = window.firestore;
+// Initialize Firestore
+const db = firebase.firestore();
 
 // Navigation menu for mobile
 function showMenu() {
