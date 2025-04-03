@@ -10,10 +10,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize Firestore
-const db = firebase.firestore();
+const db = firestore.getFirestore(app);
 
 // Navigation menu for mobile
 function showMenu() {
@@ -94,9 +94,9 @@ waitlistForm.addEventListener("submit", function (e) {
   };
 
   // Send data to Firestore "grounded" collection with document ID "signup"
-  db.collection("grounded")
-    .doc("signup")
-    .set(signupData)
+  const docRef = firestore.doc(db, "grounded", "signup");
+  firestore
+    .setDoc(docRef, signupData)
     .then(() => {
       console.log("Document successfully written to 'grounded/signup'");
 
