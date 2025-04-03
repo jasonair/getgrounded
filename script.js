@@ -9,31 +9,19 @@ const firebaseConfig = {
   measurementId: "G-MSNE0YT0GY",
 };
 // Initialize Firebase - using the correct global objects for v10.5.0 standalone SDK
-// For debugging purposes - let's see what globals are available
-console.log("All window globals:", Object.keys(window));
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
-// Let's try a different approach with the standalone SDK
-// First, let's create a dummy database object that logs operations
-const db = {
-  collection: function (collectionPath) {
-    console.log("Accessing collection:", collectionPath);
-    return {
-      doc: function (docPath) {
-        console.log("Accessing document:", docPath);
-        return {
-          set: function (data) {
-            console.log("Setting data:", data);
-            // Return a resolved promise to simulate success
-            return Promise.resolve();
-          },
-        };
-      },
-    };
-  },
-};
+// For debugging purposes
+console.log(
+  "Available Firebase globals:",
+  Object.keys(window).filter(
+    (key) => key.includes("firebase") || key.includes("Fire")
+  )
+);
 
-// Log when we're trying to use the database
-console.log("Database object created as fallback");
+// Initialize Firestore
+const db = firebase.firestore();
 
 // Navigation menu for mobile
 function showMenu() {
