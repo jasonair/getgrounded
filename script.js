@@ -1,14 +1,28 @@
-// Firebase configuration
-// Using the Firebase compatibility version loaded via CDN in index.html
+// Firebase configuration - using modular imports from npm package
 
-// Initialize Firestore only after the DOM is fully loaded
-let db;
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 
-// Wait for the DOM to be fully loaded, which ensures Firebase is initialized
-document.addEventListener("DOMContentLoaded", function () {
-  // Get a reference to Firestore
-  db = firebase.firestore();
-});
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD-ez1DM8kB7DTMmyAibGf-tliEi81yb0I",
+  authDomain: "grounded-7832a.firebaseapp.com",
+  projectId: "grounded-7832a",
+  storageBucket: "grounded-7832a.firebasestorage.app",
+  messagingSenderId: "546799366765",
+  appId: "1:546799366765:web:6e25af929a86b24751c564",
+  measurementId: "G-MSNE0YT0GY",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+// No need to reinitialize Firestore in DOMContentLoaded since we're using the modular API
 
 // Navigation menu for mobile
 function showMenu() {
@@ -98,10 +112,11 @@ document.addEventListener("DOMContentLoaded", function () {
         Habit: formDataObj.interest,
       };
 
-      // Add a new document to the "grounded" collection
-      db.collection("grounded")
-        .add(signupData)
-        .then((docRef) => {
+      // Add a new document to the "grounded" collection using modular API
+      try {
+        // Using async/await with try/catch for better readability
+        (async () => {
+          const docRef = await addDoc(collection(db, "grounded"), signupData);
           console.log("Document written with ID: ", docRef.id);
 
           // Show success modal
@@ -109,8 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Reset the form
           waitlistForm.reset();
-        })
-        .catch((error) => {
+        })().catch((error) => {
           console.error("Error adding document: ", error);
 
           // Optionally, show an error modal or message
@@ -118,6 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
             "There was an error submitting your form. Please try again later."
           );
         });
+      } catch (error) {
+        console.error("Error in form submission: ", error);
+        alert(
+          "There was an error submitting your form. Please try again later."
+        );
+      }
     });
   }
 });
