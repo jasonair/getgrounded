@@ -1,9 +1,14 @@
 // Firebase configuration
 // Using the Firebase compatibility version loaded via CDN in index.html
 
-// Firebase is initialized in the index.html file
-// Get a reference to Firestore
-const db = firebase.firestore();
+// Initialize Firestore only after the DOM is fully loaded
+let db;
+
+// Wait for the DOM to be fully loaded, which ensures Firebase is initialized
+document.addEventListener("DOMContentLoaded", function () {
+  // Get a reference to Firestore
+  db = firebase.firestore();
+});
 
 // Navigation menu for mobile
 function showMenu() {
@@ -59,65 +64,86 @@ function animateCounter() {
   }, frameDuration);
 }
 
-// Waitlist form submission
-const waitlistForm = document.getElementById("waitlist-form");
-const successModal = document.getElementById("success-modal");
-const closeBtn = document.querySelector(".close");
-const closeModalBtn = document.getElementById("close-modal");
+// Variables for form elements - will be initialized in DOMContentLoaded
+let waitlistForm;
+let successModal;
+let closeBtn;
+let closeModalBtn;
 
-waitlistForm.addEventListener("submit", function (e) {
-  e.preventDefault();
+// Initialize form-related elements and events in DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize form elements
+  waitlistForm = document.getElementById("waitlist-form");
+  successModal = document.getElementById("success-modal");
+  closeBtn = document.querySelector(".close");
+  closeModalBtn = document.getElementById("close-modal");
 
-  // Get form data
-  const formData = new FormData(waitlistForm);
-  const formDataObj = {};
+  // Form submission handler
+  if (waitlistForm) {
+    waitlistForm.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-  formData.forEach((value, key) => {
-    formDataObj[key] = value;
-  });
+      // Get form data
+      const formData = new FormData(waitlistForm);
+      const formDataObj = {};
 
-  // Map form data to match the required fields in the "signup" document
-  const signupData = {
-    Name: formDataObj.name,
-    Email: formDataObj.email,
-    Habit: formDataObj.interest,
-  };
+      formData.forEach((value, key) => {
+        formDataObj[key] = value;
+      });
 
-  // Add a new document to the "grounded" collection
-  db.collection("grounded")
-    .add(signupData)
-    .then((docRef) => {
-      console.log("Document written with ID: ", docRef.id);
+      // Map form data to match the required fields in the "signup" document
+      const signupData = {
+        Name: formDataObj.name,
+        Email: formDataObj.email,
+        Habit: formDataObj.interest,
+      };
 
-      // Show success modal
-      successModal.style.display = "flex";
+      // Add a new document to the "grounded" collection
+      db.collection("grounded")
+        .add(signupData)
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
 
-      // Reset the form
-      waitlistForm.reset();
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
+          // Show success modal
+          successModal.style.display = "flex";
 
-      // Optionally, show an error modal or message
-      alert("There was an error submitting your form. Please try again later.");
+          // Reset the form
+          waitlistForm.reset();
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+
+          // Optionally, show an error modal or message
+          alert(
+            "There was an error submitting your form. Please try again later."
+          );
+        });
     });
-});
-
-// Close modal when clicking the X
-closeBtn.addEventListener("click", function () {
-  successModal.style.display = "none";
-});
-
-// Close modal when clicking the Close button
-closeModalBtn.addEventListener("click", function () {
-  successModal.style.display = "none";
-});
-
-// Close modal when clicking outside the modal content
-window.addEventListener("click", function (e) {
-  if (e.target === successModal) {
-    successModal.style.display = "none";
   }
+});
+
+// Modal close handlers - moved to DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
+  // Close modal when clicking the X
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function () {
+      successModal.style.display = "none";
+    });
+  }
+
+  // Close modal when clicking the Close button
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", function () {
+      successModal.style.display = "none";
+    });
+  }
+
+  // Close modal when clicking outside the modal content
+  window.addEventListener("click", function (e) {
+    if (e.target === successModal) {
+      successModal.style.display = "none";
+    }
+  });
 });
 
 // Run carbon counter animation when the section is in view
