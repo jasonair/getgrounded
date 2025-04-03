@@ -33,6 +33,10 @@ function hideMenu() {
   document.getElementById("navLinks").style.right = "-250px";
 }
 
+// Make menu functions globally available
+window.showMenu = showMenu;
+window.hideMenu = hideMenu;
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
