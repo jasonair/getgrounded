@@ -61,11 +61,11 @@ ul {
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0px;
 }
 
 section {
-  padding: 80px 40px;
+  padding: 80px 20px;
 }
 
 section h2 {
