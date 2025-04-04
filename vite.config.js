@@ -5,7 +5,6 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 export default defineConfig({
   base: "/", // Set the base path for the root of the domain
-  publicDir: "public", // Specify the public directory
   build: {
     rollupOptions: {
       input: {
