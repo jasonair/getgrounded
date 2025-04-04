@@ -15,7 +15,7 @@ When shared, the link will display:
 
 - Title: "Grounded. | Earn Rewards for Sustainable Choices"
 - Description: "Auto-track your eco-friendly habits and earn points for products. No journal required."
-- Thumbnail: The hero section background image (citiscape.png)
+- Thumbnail: The hero section background image (cityscape-compressed.jpg)
 
 ## Current Implementation
 
@@ -31,7 +31,7 @@ Before deploying the website to production, you need to update the following in 
 
 1. **Update image URLs to absolute paths**:
 
-   - Change `content="images/citiscape.png"` to `content="https://getgrounded.io/assets/citiscape-K3ZEbMTr.png"`
+   - Change `content="images/cityscape-compressed.jpg"` to `content="https://getgrounded.io/assets/citiscape-K3ZEbMTr.png"`
    - This ensures the images load correctly when shared on social media
 
 2. **Update the website URL**:

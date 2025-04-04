@@ -60,26 +60,46 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 
 // Carbon counter animation
 function animateCounter() {
-  const counter = document.getElementById("carbon-counter");
-  const userCount = document.getElementById("user-count");
-  const targetCount = 36500; // 1000 users * 36.5kg per year (approx avg savings calculated from data)
-  const duration = 2000; // milliseconds
+  // Define all counters and their target values
+  const counters = [
+    { id: "co2-counter", target: 10 }, // 10 Million kg of CO₂e
+    { id: "miles-counter", target: 40 }, // 40 Million miles
+    { id: "flights-counter", target: 45000 }, // 45,000 flights
+  ];
+
+  const duration = 2500; // milliseconds
   const frameDuration = 1000 / 60; // 60fps
   const frames = Math.ceil(duration / frameDuration);
-  const increment = targetCount / frames;
 
-  let count = 0;
+  // Animate each counter
+  counters.forEach((counterData) => {
+    const counter = document.getElementById(counterData.id);
+    if (!counter) return;
 
-  const counterAnimation = setInterval(() => {
-    count += increment;
+    const increment = counterData.target / frames;
+    let count = 0;
 
-    if (count >= targetCount) {
-      count = targetCount;
-      clearInterval(counterAnimation);
-    }
+    const counterAnimation = setInterval(() => {
+      count += increment;
 
-    counter.textContent = Math.floor(count).toLocaleString();
-  }, frameDuration);
+      if (count >= counterData.target) {
+        count = counterData.target;
+        clearInterval(counterAnimation);
+      }
+
+      // Format the number based on counter type
+      if (
+        counterData.id === "co2-counter" ||
+        counterData.id === "miles-counter"
+      ) {
+        // For millions, show with one decimal place
+        counter.textContent = (Math.floor(count * 10) / 10).toLocaleString();
+      } else {
+        // For flights, show as integer
+        counter.textContent = Math.floor(count).toLocaleString();
+      }
+    }, frameDuration);
+  });
 }
 
 // Variables for form elements - will be initialized in DOMContentLoaded
