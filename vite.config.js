@@ -3,7 +3,8 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/getgrounded/", // Set the base path to match your GitHub Pages repository name
+  base: "/", // Set the base path for the root of the domain
+  publicDir: "public", // Specify the public directory
   build: {
     rollupOptions: {
       input: {
