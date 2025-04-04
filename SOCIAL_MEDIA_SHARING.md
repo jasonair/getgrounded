@@ -31,12 +31,12 @@ Before deploying the website to production, you need to update the following in 
 
 1. **Update image URLs to absolute paths**:
 
-   - Change `content="images/citiscape.png"` to `content="https://yourdomain.com/images/citiscape.png"`
+   - Change `content="images/citiscape.png"` to `content="https://getgrounded.io/assets/citiscape-K3ZEbMTr.png"`
    - This ensures the images load correctly when shared on social media
 
 2. **Update the website URL**:
 
-   - Change `content="https://grounded.app/"` to your actual domain
+   - Change `content="https://getgrounded.io/"` to your actual domain if it changes
    - This applies to `og:url`, `twitter:url`, and the canonical link
 
 3. **Verify image dimensions**:
