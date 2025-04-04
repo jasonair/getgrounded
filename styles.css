@@ -82,7 +82,7 @@ header {
   background-image: url("images/cityscape-compressed.jpg");
   background-position: center;
   background-size: cover;
-  background-attachment: fixed; /* Parallax effect */
+  /* Removed parallax effect */
   position: relative;
   color: #fff;
 }
@@ -307,7 +307,7 @@ nav .fas {
   background-image: url("images/Footprints on a Natural Path.jpg");
   background-position: center;
   background-size: cover;
-  background-attachment: fixed; /* Parallax effect */
+  /* Removed parallax effect */
   text-align: center;
   color: #fff;
   padding: 100px 0;
@@ -1061,40 +1061,4 @@ h3,
   }
 }
 
-/* iOS Parallax Fix */
-.ios-device header,
-.ios-device .carbon-impact {
-  background-attachment: scroll !important;
-  background-image: none !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.ios-bg-fix {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-attachment: scroll;
-  background-position: center;
-  background-size: cover;
-  z-index: 0;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Ensure the overlay is above the background but below the content */
-.ios-device header::before,
-.ios-device .carbon-impact::before {
-  z-index: 1;
-}
-
-/* Ensure all content is above the background and overlay */
-.ios-device nav,
-.ios-device .header-content,
-.ios-device .impact-container {
-  position: relative;
-  z-index: 2;
-}
+/* iOS Parallax Fix removed as parallax effect is no longer used */
