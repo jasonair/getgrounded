@@ -814,6 +814,18 @@ footer {
     font-size: 1.3rem;
   }
 
+  /* Partner logos - 2 columns on mobile */
+  .partner-logos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .logo-container {
+    width: 100%;
+    margin: 0;
+  }
+
   .benefits-container {
     flex-direction: column;
   }
