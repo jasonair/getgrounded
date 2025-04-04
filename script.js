@@ -317,6 +317,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // iOS Parallax Fix
+  document.addEventListener("DOMContentLoaded", function () {
+    // Detect iOS devices
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    if (isIOS) {
+      // Add a class to the body for iOS-specific styling
+      document.body.classList.add("ios-device");
+
+      // Get the parallax elements
+      const header = document.querySelector("header");
+      const carbonImpact = document.querySelector(".carbon-impact");
+
+      // Apply iOS-specific background handling
+      if (header) {
+        const headerBgImg = getComputedStyle(header).backgroundImage;
+        const headerBgPos = getComputedStyle(header).backgroundPosition;
+        const headerBgSize = getComputedStyle(header).backgroundSize;
+
+        // Create a background div for iOS
+        const headerBgDiv = document.createElement("div");
+        headerBgDiv.className = "ios-bg-fix";
+        headerBgDiv.style.backgroundImage = headerBgImg;
+        headerBgDiv.style.backgroundPosition = headerBgPos;
+        headerBgDiv.style.backgroundSize = headerBgSize;
+
+        // Insert before the first child to be behind all content
+        header.insertBefore(headerBgDiv, header.firstChild);
+      }
+
+      if (carbonImpact) {
+        const carbonBgImg = getComputedStyle(carbonImpact).backgroundImage;
+        const carbonBgPos = getComputedStyle(carbonImpact).backgroundPosition;
+        const carbonBgSize = getComputedStyle(carbonImpact).backgroundSize;
+
+        // Create a background div for iOS
+        const carbonBgDiv = document.createElement("div");
+        carbonBgDiv.className = "ios-bg-fix";
+        carbonBgDiv.style.backgroundImage = carbonBgImg;
+        carbonBgDiv.style.backgroundPosition = carbonBgPos;
+        carbonBgDiv.style.backgroundSize = carbonBgSize;
+
+        // Insert before the first child to be behind all content
+        carbonImpact.insertBefore(carbonBgDiv, carbonImpact.firstChild);
+      }
+    }
+  });
+
   // Save cookie preferences
   cookieSave.addEventListener("click", function () {
     const preferences = {
