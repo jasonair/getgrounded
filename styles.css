@@ -55,6 +55,13 @@ ul {
   list-style: none;
 }
 
+.terms-list {
+  padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  list-style-type: disc;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
