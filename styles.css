@@ -1063,6 +1063,13 @@ h3,
     position: relative;
   }
 
+  /* Mobile Styles */
+  @media (max-width: 767px) {
+    .form-container {
+      padding: 20px;
+    }
+  }
+
   .dark-green-overlay::before {
     content: "";
     position: absolute;
