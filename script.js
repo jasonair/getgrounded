@@ -344,3 +344,23 @@ document.addEventListener("DOMContentLoaded", function () {
     cookieConsent.style.display = "none";
   });
 });
+
+// Add event listener to track button and link clicks
+// and send data-description to Firebase Analytics
+
+document.addEventListener('click', (event) => {
+  const target = event.target;
+
+  // Check if the clicked element is a button or link
+  if (target.tagName === 'BUTTON' || target.tagName === 'A') {
+    const description = target.getAttribute('data-description') || 'No description';
+
+    // Log the event to Firebase Analytics
+    analytics.logEvent('click', {
+      event_category: 'UI Interaction',
+      event_label: description,
+    });
+
+    console.log(`Event logged: ${description}`); // Optional: For debugging
+  }
+});
