@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to CREATE documents in the 'grounded' collection
+    match /grounded/{docId} {
+      allow create: if true;
+      // Optional: Keep default security for other operations on 'grounded' docs
+      // allow read, update, delete: if request.auth != null;
+    }
+
+    // Default security for all other documents/collections
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

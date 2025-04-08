@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Form submission handler
   if (waitlistForm) {
-    waitlistForm.addEventListener("submit", function (e) {
+    waitlistForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       // Get form data
@@ -129,38 +129,32 @@ document.addEventListener("DOMContentLoaded", function () {
         formDataObj[key] = value;
       });
 
-      // Map form data to match the required fields in the "signup" document
-      const signupData = {
-        Name: formDataObj.name,
-        Email: formDataObj.email,
-        Habit: formDataObj.interest,
-      };
-
-      // Add a new document to the "grounded" collection using modular API
+      // Get reCAPTCHA token
       try {
-        // Using async/await with try/catch for better readability
-        (async () => {
-          const docRef = await addDoc(collection(db, "grounded"), signupData);
-          console.log("Document written with ID: ", docRef.id);
+        const recaptchaToken = await grecaptcha.execute('6LeTTg8rAAAAANrjs2RVKYn7vTAL9dIKz9MCTctb', { action: 'submit' });
+        console.log('reCAPTCHA Token:', recaptchaToken); // Debugging log
+        formDataObj['g-recaptcha-response'] = recaptchaToken;
 
-          // Show success modal
-          successModal.style.display = "flex";
-
-          // Reset the form
-          waitlistForm.reset();
-        })().catch((error) => {
-          console.error("Error adding document: ", error);
-
-          // Optionally, show an error modal or message
-          alert(
-            "There was an error submitting your form. Please try again later."
-          );
+        // Send form data to the Firebase Cloud Function
+        const response = await fetch('https://us-central1-grounded-7832a.cloudfunctions.net/submitForm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formDataObj),
         });
+
+        if (response.ok) {
+          console.log('Form submitted successfully!');
+          successModal.style.display = "flex";
+          waitlistForm.reset();
+        } else {
+          console.error('Failed to submit the form.');
+          alert('Failed to submit the form. Please try again.');
+        }
       } catch (error) {
-        console.error("Error in form submission: ", error);
-        alert(
-          "There was an error submitting your form. Please try again later."
-        );
+        console.error('Error generating reCAPTCHA token or submitting the form:', error);
+        alert('An error occurred. Please try again later.');
       }
     });
   }
@@ -345,9 +339,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Add event listener to track button and link clicks
-// and send data-description to Firebase Analytics
-
+// Remove analytics.logEvent calls
+// Commenting out analytics.logEvent to avoid errors if analytics is not required
+/*
 document.addEventListener('click', (event) => {
   const target = event.target;
 
@@ -356,11 +350,19 @@ document.addEventListener('click', (event) => {
     const description = target.getAttribute('data-description') || 'No description';
 
     // Log the event to Firebase Analytics
-    analytics.logEvent('click', {
-      event_category: 'UI Interaction',
-      event_label: description,
-    });
+    // analytics.logEvent('click', {
+    //   event_category: 'UI Interaction',
+    //   event_label: description,
+    // });
 
     console.log(`Event logged: ${description}`); // Optional: For debugging
   }
 });
+*/
+
+// Add debugging logs to verify reCAPTCHA script loading
+if (typeof grecaptcha === 'undefined') {
+  console.error('reCAPTCHA script not loaded. Ensure the script is included in index.html.');
+} else {
+  console.log('reCAPTCHA script loaded successfully.');
+}
