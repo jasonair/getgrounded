@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Remove analytics.logEvent calls
 // Commenting out analytics.logEvent to avoid errors if analytics is not required
-/*
+
 document.addEventListener('click', (event) => {
   const target = event.target;
 
@@ -364,7 +364,7 @@ document.addEventListener('click', (event) => {
     console.log(`Event logged: ${description}`); // Optional: For debugging
   }
 });
-*/
+
 
 // Add debugging logs to verify reCAPTCHA script loading
 if (typeof grecaptcha === 'undefined') {
