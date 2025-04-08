@@ -21,6 +21,13 @@ const db = admin.firestore();
 
 exports.submitForm = onRequest((req, res) => {
   cors(req, res, async () => {
+    if (req.method === "OPTIONS") {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.set("Access-Control-Allow-Headers", "Content-Type");
+      return res.status(204).send("");
+    }
+
     if (req.method !== "POST") {
       return res.status(405).send("Method Not Allowed");
     }
@@ -29,9 +36,12 @@ exports.submitForm = onRequest((req, res) => {
       name,
       email,
       interest,
+      interestLevel, // Add the new field to the Firestore document
       "g-recaptcha-response": recaptchaToken,
     } = req.body;
     const secretKey = "6LeTTg8rAAAAAMd0e5cwfHABFOGWx2zNwty-q7QK";
+
+    console.log("Received data:", { name, email, interest, interestLevel }); // Debugging log
 
     // Verify reCAPTCHA token
     try {
@@ -50,13 +60,22 @@ exports.submitForm = onRequest((req, res) => {
         return res.status(400).send("reCAPTCHA validation failed.");
       }
 
-      // Save data to Firestore
-      await db.collection("waitlist").add({
+      console.log("Attempting to save to Firestore:", {
         name,
         email,
         interest,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      });
+        interestLevel
+      }); // Fixed spacing and line length
+
+      const savedDoc = await db.collection("waitlist").add({
+        name,
+        email,
+        interest,
+        interestLevel,
+        timestamp: admin.firestore.FieldValue.serverTimestamp()
+      }); // Fixed spacing and line length
+
+      console.log("Document saved successfully with ID:", savedDoc.id);
 
       return res.status(200).send("Form submitted successfully!");
     } catch (error) {

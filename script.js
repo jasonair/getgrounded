@@ -129,6 +129,12 @@ document.addEventListener("DOMContentLoaded", function () {
         formDataObj[key] = value;
       });
 
+      // Include the new interestLevel field if it exists
+      const interestLevel = formData.get('interestLevel');
+      if (interestLevel) {
+        formDataObj['interestLevel'] = interestLevel;
+      }
+
       // Get reCAPTCHA token
       try {
         const recaptchaToken = await grecaptcha.execute('6LeTTg8rAAAAANrjs2RVKYn7vTAL9dIKz9MCTctb', { action: 'submit' });

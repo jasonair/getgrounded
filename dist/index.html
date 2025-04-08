@@ -47,8 +47,8 @@
         rel="stylesheet">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js?render=6LeTTg8rAAAAANrjs2RVKYn7vTAL9dIKz9MCTctb"></script>
-  <script type="module" crossorigin src="/assets/main-D6WXqd8-.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/styles-kaxcHDZi.css">
+  <script type="module" crossorigin src="/assets/main-CvvFQl2u.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/styles-BIBPRgjD.css">
 </head>
 
 <body>
@@ -286,6 +286,52 @@
                         <option value="energy" data-description="Waitlist Form - Interest Dropdown - Energy Efficiency">Energy efficiency</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="interestLevel">How excited are you to try Grounded?</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" id="cant-wait" name="interestLevel" value="Super keen">
+                            Super keen
+                        </label>
+                        <label>
+                            <input type="radio" id="curious" name="interestLevel" value="Curious">
+                            Curious
+                        </label>
+                        <label>
+                            <input type="radio" id="just-browsing" name="interestLevel" value="Just checking it out">
+                            Just checking it out
+                        </label>
+                    </div>
+                </div>
+
+                <style>
+                    .radio-group {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        justify-content: flex-start;
+                        gap: 20px;
+                        width: auto;
+                        padding-left: 0;
+                    }
+
+                    .radio-group label {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        white-space: nowrap;
+                    }
+
+                    .radio-group label input[type="radio"] {
+                        width: 25px;
+                        height: 25px;
+                    }
+
+                    @media (max-width: 600px) {
+                        .radio-group {
+                            flex-wrap: wrap;
+                        }
+                    }
+                </style>
                 <!-- Removed the reCAPTCHA widget as it is not required for v3 -->
                 <button type="submit" class="form-btn" data-description="Waitlist Form - Join the Waitlist Button">Join the Waitlist</button>
                 <p class="privacy-note">We respect your privacy and will only use your email to send updates about Grounded.</p>
