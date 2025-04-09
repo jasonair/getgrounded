@@ -15,6 +15,7 @@ const cors = require("cors")({origin: true});
 
 admin.initializeApp();
 const db = admin.firestore();
+db.settings({ ignoreUndefinedProperties: true });
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
@@ -36,12 +37,13 @@ exports.submitForm = onRequest((req, res) => {
       name,
       email,
       interest,
-      interestLevel, // Add the new field to the Firestore document
+      interestLevel = "Not specified", // Default value if undefined
       "g-recaptcha-response": recaptchaToken,
     } = req.body;
-    const secretKey = "6LeTTg8rAAAAAMd0e5cwfHABFOGWx2zNwty-q7QK";
 
-    console.log("Received data:", { name, email, interest, interestLevel }); // Debugging log
+    console.log("Received data:", { name, email, interest, interestLevel, recaptchaToken }); // Debugging log
+
+    const secretKey = "6LeTTg8rAAAAAMd0e5cwfHABFOGWx2zNwty-q7QK";
 
     // Verify reCAPTCHA token
     try {
@@ -56,6 +58,8 @@ exports.submitForm = onRequest((req, res) => {
         }
       );
 
+      console.log("reCAPTCHA verification response:", response.data); // Debugging log
+
       if (!response.data.success) {
         return res.status(400).send("reCAPTCHA validation failed.");
       }
@@ -65,7 +69,7 @@ exports.submitForm = onRequest((req, res) => {
         email,
         interest,
         interestLevel
-      }); // Fixed spacing and line length
+      });
 
       const savedDoc = await db.collection("waitlist").add({
         name,
@@ -73,7 +77,7 @@ exports.submitForm = onRequest((req, res) => {
         interest,
         interestLevel,
         timestamp: admin.firestore.FieldValue.serverTimestamp()
-      }); // Fixed spacing and line length
+      });
 
       console.log("Document saved successfully with ID:", savedDoc.id);
 

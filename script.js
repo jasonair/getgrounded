@@ -166,6 +166,62 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+document.getElementById('waitlist-form').addEventListener('submit', async function(event) {
+    const interest = document.getElementById('interest');
+    const interestLevel = document.querySelector('input[name="interestLevel"]:checked');
+
+    // Check if an option is selected in the dropdown
+    if (!interest.value) {
+        alert('Please select a sustainable habit you are most interested in tracking.');
+        event.preventDefault();
+        return;
+    }
+
+    // Check if a radio button is selected
+    if (!interestLevel) {
+        alert('Please select how excited you are to try Grounded.');
+        event.preventDefault();
+        return;
+    }
+
+    try {
+        // Debugging log for reCAPTCHA execution
+        console.log('Executing reCAPTCHA...');
+
+        const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
+        console.log('Generated reCAPTCHA token:', recaptchaToken);
+
+        // Include the reCAPTCHA token in the form data
+        const formData = new FormData(event.target);
+        formData.append('g-recaptcha-response', recaptchaToken);
+
+        // Ensure the form data uses the correct field names
+        const nameField = document.getElementById('name');
+        const emailField = document.getElementById('email');
+        const interestField = document.getElementById('interest');
+        const interestLevelField = document.querySelector('input[name="interestLevel"]:checked');
+        if (!interestLevelField) {
+            alert('Please select how excited you are to try Grounded.');
+            event.preventDefault();
+            return;
+        }
+        formData.append('interestLevel', interestLevelField.value);
+
+        formData.append('name', nameField.value);
+        formData.append('email', emailField.value);
+        formData.append('interest', interestField.value);
+        formData.append('interestLevel', interestLevelField ? interestLevelField.value : 'Not specified');
+
+        // Debugging log for form data
+        console.log('Form data being sent:', Object.fromEntries(formData.entries()));
+
+    } catch (error) {
+        console.error('Error during reCAPTCHA execution:', error);
+        alert('An error occurred while validating reCAPTCHA. Please try again.');
+        event.preventDefault();
+    }
+});
+
 // Modal close handlers - moved to DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function () {
   // Close modal when clicking the X
