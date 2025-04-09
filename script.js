@@ -118,8 +118,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Form submission handler
   if (waitlistForm) {
-    waitlistForm.addEventListener("submit", async function (e) {
+    const submitButton = waitlistForm.querySelector('button[type="submit"]');
+    submitButton.addEventListener('click', async function (e) {
       e.preventDefault();
+      e.stopPropagation();
+
+      // Validate interest selection
+      const interest = document.getElementById('interest');
+      if (!interest.value) {
+        alert('Please select a sustainable habit you are most interested in tracking.');
+        return;
+      }
+
+      // Validate interest level selection
+      const interestLevel = document.querySelector('input[name="interestLevel"]:checked');
+      if (!interestLevel) {
+        alert('Please select how excited you are to try Grounded.');
+        return;
+      }
 
       // Get form data
       const formData = new FormData(waitlistForm);
@@ -129,17 +145,14 @@ document.addEventListener("DOMContentLoaded", function () {
         formDataObj[key] = value;
       });
 
-      // Include the new interestLevel field if it exists
-      const interestLevel = formData.get('interestLevel');
-      if (interestLevel) {
-        formDataObj['interestLevel'] = interestLevel;
-      }
-
       // Get reCAPTCHA token
       try {
         const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
         console.log('reCAPTCHA Token:', recaptchaToken); // Debugging log
         formDataObj['g-recaptcha-response'] = recaptchaToken;
+
+        // Disable submit button while processing
+        submitButton.disabled = true;
 
         // Send form data to the Firebase Cloud Function
         const response = await fetch('https://us-central1-grounded-7832a.cloudfunctions.net/submitForm', {
@@ -161,66 +174,15 @@ document.addEventListener("DOMContentLoaded", function () {
       } catch (error) {
         console.error('Error generating reCAPTCHA token or submitting the form:', error);
         alert('An error occurred. Please try again later.');
+      } finally {
+        // Re-enable submit button
+        submitButton.disabled = false;
       }
     });
   }
 });
 
-document.getElementById('waitlist-form').addEventListener('submit', async function(event) {
-    const interest = document.getElementById('interest');
-    const interestLevel = document.querySelector('input[name="interestLevel"]:checked');
 
-    // Check if an option is selected in the dropdown
-    if (!interest.value) {
-        alert('Please select a sustainable habit you are most interested in tracking.');
-        event.preventDefault();
-        return;
-    }
-
-    // Check if a radio button is selected
-    if (!interestLevel) {
-        alert('Please select how excited you are to try Grounded.');
-        event.preventDefault();
-        return;
-    }
-
-    try {
-        // Debugging log for reCAPTCHA execution
-        console.log('Executing reCAPTCHA...');
-
-        const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
-        console.log('Generated reCAPTCHA token:', recaptchaToken);
-
-        // Include the reCAPTCHA token in the form data
-        const formData = new FormData(event.target);
-        formData.append('g-recaptcha-response', recaptchaToken);
-
-        // Ensure the form data uses the correct field names
-        const nameField = document.getElementById('name');
-        const emailField = document.getElementById('email');
-        const interestField = document.getElementById('interest');
-        const interestLevelField = document.querySelector('input[name="interestLevel"]:checked');
-        if (!interestLevelField) {
-            alert('Please select how excited you are to try Grounded.');
-            event.preventDefault();
-            return;
-        }
-        formData.append('interestLevel', interestLevelField.value);
-
-        formData.append('name', nameField.value);
-        formData.append('email', emailField.value);
-        formData.append('interest', interestField.value);
-        formData.append('interestLevel', interestLevelField ? interestLevelField.value : 'Not specified');
-
-        // Debugging log for form data
-        console.log('Form data being sent:', Object.fromEntries(formData.entries()));
-
-    } catch (error) {
-        console.error('Error during reCAPTCHA execution:', error);
-        alert('An error occurred while validating reCAPTCHA. Please try again.');
-        event.preventDefault();
-    }
-});
 
 // Modal close handlers - moved to DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function () {
