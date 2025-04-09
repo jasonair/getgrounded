@@ -8,7 +8,7 @@ import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD-ez1DM8kB7DTMmyAibGf-tliEi81yb0I",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "grounded-7832a.firebaseapp.com",
   projectId: "grounded-7832a",
   storageBucket: "grounded-7832a.firebasestorage.app",
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Get reCAPTCHA token
       try {
-        const recaptchaToken = await grecaptcha.execute('6LeTTg8rAAAAANrjs2RVKYn7vTAL9dIKz9MCTctb', { action: 'submit' });
+        const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
         console.log('reCAPTCHA Token:', recaptchaToken); // Debugging log
         formDataObj['g-recaptcha-response'] = recaptchaToken;
 
