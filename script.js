@@ -123,10 +123,29 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       e.stopPropagation();
 
+      // Validate name field
+      const nameField = document.getElementById('name');
+      const namePattern = /^[A-Za-z\s]+$/;
+      if (!nameField.value.trim() || !namePattern.test(nameField.value.trim())) {
+          alert('Please enter a valid name (letters and spaces only).');
+          nameField.focus();
+          return;
+      }
+
+      // Validate email field
+      const emailField = document.getElementById('email');
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailField.value.trim() || !emailPattern.test(emailField.value.trim())) {
+          alert('Please enter a valid email address.');
+          emailField.focus();
+          return;
+      }
+
       // Validate interest selection
       const interest = document.getElementById('interest');
       if (!interest.value) {
         alert('Please select a sustainable habit you are most interested in tracking.');
+        interest.focus();
         return;
       }
 
