@@ -47,7 +47,7 @@
         rel="stylesheet">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js?render=6LeTTg8rAAAAANrjs2RVKYn7vTAL9dIKz9MCTctb"></script>
-  <script type="module" crossorigin src="/assets/main-DHRVty_T.js"></script>
+  <script type="module" crossorigin src="/assets/main-DQdknt8V.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/styles-BIBPRgjD.css">
 </head>
 
@@ -268,11 +268,11 @@
             <form id="waitlist-form" onsubmit="return false;">
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required data-description="Waitlist Form - Name Input">
+                    <input type="text" id="name" name="name" required minlength="2" pattern="[A-Za-z\s]+" data-description="Waitlist Form - Name Input" title="Please enter a valid name (letters and spaces only)">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required data-description="Waitlist Form - Email Input">
+                    <input type="email" id="email" name="email" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+" data-description="Waitlist Form - Email Input" title="Please enter a valid email address">
                 </div>
                 <div class="form-group">
                     <label for="interest">What sustainable habit are you most interested in tracking?</label>
