@@ -2,11 +2,10 @@
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, logEvent } from "firebase/analytics";
 import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "grounded-7832a.firebaseapp.com",
@@ -22,13 +21,12 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-// No need to reinitialize Firestore in DOMContentLoaded since we're using the modular API
-
-// Navigation menu for mobile
+// Show the mobile navigation menu
 function showMenu() {
   document.getElementById("navLinks").style.right = "0";
 }
 
+// Hide the mobile navigation menu
 function hideMenu() {
   document.getElementById("navLinks").style.right = "-250px";
 }
@@ -37,7 +35,7 @@ function hideMenu() {
 window.showMenu = showMenu;
 window.hideMenu = hideMenu;
 
-// Smooth scrolling for navigation links
+// Enable smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault();
@@ -46,32 +44,24 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     const targetElement = document.querySelector(targetId);
 
     if (targetElement) {
-      // Close mobile menu if open
       hideMenu();
-
-      // Scroll to target element
-      window.scrollTo({
-        top: targetElement.offsetTop - 70,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: targetElement.offsetTop - 70, behavior: "smooth" });
     }
   });
 });
 
-// Carbon counter animation
+// Animate number counters in the carbon impact section
 function animateCounter() {
-  // Define all counters and their target values
   const counters = [
-    { id: "co2-counter", target: 10 }, // 10 Million kg of CO₂e
-    { id: "miles-counter", target: 40 }, // 40 Million miles
-    { id: "flights-counter", target: 45000 }, // 45,000 flights
+    { id: "co2-counter", target: 10 },
+    { id: "miles-counter", target: 40 },
+    { id: "flights-counter", target: 45000 },
   ];
 
-  const duration = 2500; // milliseconds
-  const frameDuration = 1000 / 60; // 60fps
+  const duration = 2500;
+  const frameDuration = 1000 / 60;
   const frames = Math.ceil(duration / frameDuration);
 
-  // Animate each counter
   counters.forEach((counterData) => {
     const counter = document.getElementById(counterData.id);
     if (!counter) return;
@@ -87,61 +77,68 @@ function animateCounter() {
         clearInterval(counterAnimation);
       }
 
-      // Format the number based on counter type
-      if (
-        counterData.id === "co2-counter" ||
-        counterData.id === "miles-counter"
-      ) {
-        // For millions, show with one decimal place
+      if (counterData.id === "co2-counter" || counterData.id === "miles-counter") {
         counter.textContent = (Math.floor(count * 10) / 10).toLocaleString();
       } else {
-        // For flights, show as integer
         counter.textContent = Math.floor(count).toLocaleString();
       }
     }, frameDuration);
   });
 }
 
-// Variables for form elements - will be initialized in DOMContentLoaded
-let waitlistForm;
-let successModal;
-let closeBtn;
-let closeModalBtn;
+// Update the user count and carbon savings values when slider is adjusted
+function updateUserCount() {
+  const userCountSlider = document.getElementById("user-count-slider");
+  const userCount = document.getElementById("user-count");
+  const carbonCounter = document.getElementById("carbon-counter");
 
-// Initialize form-related elements and events in DOMContentLoaded
+  if (userCountSlider) {
+    userCountSlider.addEventListener("input", function () {
+      const count = this.value;
+      userCount.textContent = count.toLocaleString();
+      const carbonSavings = count * 36.5;
+      carbonCounter.textContent = Math.floor(carbonSavings).toLocaleString();
+    });
+  }
+}
+
+// Declare variables for form and modal elements
+let waitlistForm, successModal, closeBtn, closeModalBtn;
+
+// Main DOMContentLoaded block that initializes UI logic and handlers
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize form elements
+  // Initialise form and modal elements
   waitlistForm = document.getElementById("waitlist-form");
   successModal = document.getElementById("success-modal");
   closeBtn = document.querySelector(".close");
   closeModalBtn = document.getElementById("close-modal");
 
-  // Form submission handler
+  // Handle waitlist form submission
   if (waitlistForm) {
     const submitButton = waitlistForm.querySelector('button[type="submit"]');
     submitButton.addEventListener('click', async function (e) {
       e.preventDefault();
       e.stopPropagation();
 
-      // Validate name field
+      // Validate name
       const nameField = document.getElementById('name');
       const namePattern = /^[A-Za-z\s]+$/;
       if (!nameField.value.trim() || !namePattern.test(nameField.value.trim())) {
-          alert('Please enter a valid name (letters and spaces only).');
-          nameField.focus();
-          return;
+        alert('Please enter a valid name (letters and spaces only).');
+        nameField.focus();
+        return;
       }
 
-      // Validate email field
+      // Validate email
       const emailField = document.getElementById('email');
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailField.value.trim() || !emailPattern.test(emailField.value.trim())) {
-          alert('Please enter a valid email address.');
-          emailField.focus();
-          return;
+        alert('Please enter a valid email address.');
+        emailField.focus();
+        return;
       }
 
-      // Validate interest selection
+      // Validate dropdown and radio
       const interest = document.getElementById('interest');
       if (!interest.value) {
         alert('Please select a sustainable habit you are most interested in tracking.');
@@ -149,102 +146,76 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Validate interest level selection
       const interestLevel = document.querySelector('input[name="interestLevel"]:checked');
       if (!interestLevel) {
         alert('Please select how excited you are to try Grounded.');
         return;
       }
 
-      // Get form data
+      // Collect form data
       const formData = new FormData(waitlistForm);
       const formDataObj = {};
-
       formData.forEach((value, key) => {
         formDataObj[key] = value;
       });
 
-      // Get reCAPTCHA token
+      // Get reCAPTCHA token and submit the form
       try {
         const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
-        console.log('reCAPTCHA Token:', recaptchaToken); // Debugging log
         formDataObj['g-recaptcha-response'] = recaptchaToken;
-
-        // Disable submit button while processing
         submitButton.disabled = true;
 
-        // Send form data to the Firebase Cloud Function
         const response = await fetch('https://us-central1-grounded-7832a.cloudfunctions.net/submitForm', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formDataObj),
         });
 
         if (response.ok) {
-          console.log('Form submitted successfully!');
           successModal.style.display = "flex";
           waitlistForm.reset();
         } else {
-          console.error('Failed to submit the form.');
           alert('Failed to submit the form. Please try again.');
         }
       } catch (error) {
-        console.error('Error generating reCAPTCHA token or submitting the form:', error);
         alert('An error occurred. Please try again later.');
       } finally {
-        // Re-enable submit button
         submitButton.disabled = false;
       }
     });
   }
-});
 
-
-
-// Modal close handlers - moved to DOMContentLoaded
-document.addEventListener("DOMContentLoaded", function () {
-  // Close modal when clicking the X
+  // Modal close button logic
   if (closeBtn) {
     closeBtn.addEventListener("click", function () {
       successModal.style.display = "none";
     });
   }
 
-  // Close modal when clicking the Close button
   if (closeModalBtn) {
     closeModalBtn.addEventListener("click", function () {
       successModal.style.display = "none";
     });
   }
 
-  // Close modal when clicking outside the modal content
   window.addEventListener("click", function (e) {
     if (e.target === successModal) {
       successModal.style.display = "none";
     }
   });
-});
 
-// Run carbon counter animation when the section is in view
-document.addEventListener("DOMContentLoaded", function () {
-  // Features hover effect for better mobile experience
+  // Toggle active feature column on click (mobile UX)
   const featureCols = document.querySelectorAll(".feature-col");
-
   if (window.innerWidth <= 700) {
     featureCols.forEach((col) => {
       col.addEventListener("click", function () {
-        // Remove active class from all feature columns
         featureCols.forEach((c) => c.classList.remove("active"));
-
-        // Add active class to clicked column
         this.classList.add("active");
       });
     });
   }
 
-  // Intersection Observer for animations
+  // Animate carbon counters when section is in view
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -259,40 +230,17 @@ document.addEventListener("DOMContentLoaded", function () {
     { threshold: 0.5 }
   );
 
-  // Observe the carbon impact section
   const carbonImpactSection = document.getElementById("carbon-impact");
   if (carbonImpactSection) {
     observer.observe(carbonImpactSection);
   }
-});
 
-// Update user count and carbon savings on range input
-function updateUserCount() {
-  const userCountSlider = document.getElementById("user-count-slider");
-  const userCount = document.getElementById("user-count");
-  const carbonCounter = document.getElementById("carbon-counter");
-
-  if (userCountSlider) {
-    userCountSlider.addEventListener("input", function () {
-      const count = this.value;
-      userCount.textContent = count.toLocaleString();
-
-      // Update carbon counter (36.5kg per user per year)
-      const carbonSavings = count * 36.5;
-      carbonCounter.textContent = Math.floor(carbonSavings).toLocaleString();
-    });
-  }
-}
-
-// Call the function if the slider exists
-document.addEventListener("DOMContentLoaded", function () {
+  // Initialise user count slider logic
   if (document.getElementById("user-count-slider")) {
     updateUserCount();
   }
-});
 
-// GDPR Cookie Consent Popup
-document.addEventListener("DOMContentLoaded", function () {
+  // GDPR cookie consent popup logic
   const cookieConsent = document.getElementById("cookieConsent");
   const cookieAccept = document.getElementById("cookieAccept");
   const cookieSettings = document.getElementById("cookieSettings");
@@ -301,51 +249,32 @@ document.addEventListener("DOMContentLoaded", function () {
   const analyticsConsent = document.getElementById("analyticsConsent");
   const marketingConsent = document.getElementById("marketingConsent");
 
-  // Check if user has already made cookie choices
   const cookieChoices = localStorage.getItem("cookieConsent");
-
-  // If no cookie choices have been made, show the popup
   if (!cookieChoices) {
-    // Show cookie consent popup with a slight delay for better UX
     setTimeout(() => {
       cookieConsent.style.display = "block";
     }, 1000);
   } else {
-    // Apply saved cookie preferences
     const preferences = JSON.parse(cookieChoices);
     if (preferences.analytics) {
-      // Enable analytics cookies
       console.log("Analytics cookies enabled");
     }
     if (preferences.marketing) {
-      // Enable marketing cookies
       console.log("Marketing cookies enabled");
     }
   }
 
-  // Accept all cookies
+  // Accept all cookie types
   cookieAccept.addEventListener("click", function () {
-    const preferences = {
-      necessary: true,
-      analytics: true,
-      marketing: true,
-    };
-
-    // Save preferences to localStorage
+    const preferences = { necessary: true, analytics: true, marketing: true };
     localStorage.setItem("cookieConsent", JSON.stringify(preferences));
-
-    // Enable all cookies
     console.log("All cookies accepted");
-
-    // Hide the popup
     cookieConsent.style.display = "none";
   });
 
-  // Show cookie settings panel
+  // Open the detailed cookie settings panel
   cookieSettings.addEventListener("click", function () {
     cookieSettingsPanel.style.display = "block";
-
-    // If there are saved preferences, apply them to checkboxes
     const savedPreferences = localStorage.getItem("cookieConsent");
     if (savedPreferences) {
       const preferences = JSON.parse(savedPreferences);
@@ -354,56 +283,38 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // iOS Parallax Fix removed as parallax effect is no longer used
-
-  // Save cookie preferences
+  // Save cookie preferences and hide panel
   cookieSave.addEventListener("click", function () {
     const preferences = {
-      necessary: true, // Always required
+      necessary: true,
       analytics: analyticsConsent.checked,
       marketing: marketingConsent.checked,
     };
-
-    // Save preferences to localStorage
     localStorage.setItem("cookieConsent", JSON.stringify(preferences));
-
-    // Apply cookie preferences
     if (preferences.analytics) {
-      // Enable analytics cookies
       console.log("Analytics cookies enabled");
     }
     if (preferences.marketing) {
-      // Enable marketing cookies
       console.log("Marketing cookies enabled");
     }
-
-    // Hide the popup
     cookieConsent.style.display = "none";
+  });
+
+  // Track clicks on buttons or links with data-description, respecting cookie preferences
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest("button[data-description], a[data-description]");
+    if (target) {
+      const description = target.getAttribute("data-description") || "No description";
+      const cookiePrefs = JSON.parse(localStorage.getItem("cookieConsent") || '{}');
+      if (cookiePrefs.analytics) {
+        logEvent(analytics, 'button_click', { button_description: description });
+      }
+      console.log(`Event logged: ${description}`);
+    }
   });
 });
 
-// Remove analytics.logEvent calls
-// Commenting out analytics.logEvent to avoid errors if analytics is not required
-
-document.addEventListener('click', (event) => {
-  const target = event.target;
-
-  // Check if the clicked element is a button or link
-  if (target.tagName === 'BUTTON' || target.tagName === 'A') {
-    const description = target.getAttribute('data-description') || 'No description';
-
-    // Log the event to Firebase Analytics
-    // analytics.logEvent('click', {
-    //   event_category: 'UI Interaction',
-    //   event_label: description,
-    // });
-
-    console.log(`Event logged: ${description}`); // Optional: For debugging
-  }
-});
-
-
-// Add debugging logs to verify reCAPTCHA script loading
+// Debug log for checking if reCAPTCHA is loaded
 if (typeof grecaptcha === 'undefined') {
   console.error('reCAPTCHA script not loaded. Ensure the script is included in index.html.');
 } else {
