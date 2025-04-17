@@ -45,7 +45,10 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 
     if (targetElement) {
       hideMenu();
-      window.scrollTo({ top: targetElement.offsetTop - 70, behavior: "smooth" });
+      window.scrollTo({
+        top: targetElement.offsetTop - 70,
+        behavior: "smooth",
+      });
     }
   });
 });
@@ -77,7 +80,10 @@ function animateCounter() {
         clearInterval(counterAnimation);
       }
 
-      if (counterData.id === "co2-counter" || counterData.id === "miles-counter") {
+      if (
+        counterData.id === "co2-counter" ||
+        counterData.id === "miles-counter"
+      ) {
         counter.textContent = (Math.floor(count * 10) / 10).toLocaleString();
       } else {
         counter.textContent = Math.floor(count).toLocaleString();
@@ -116,39 +122,49 @@ document.addEventListener("DOMContentLoaded", function () {
   // Handle waitlist form submission
   if (waitlistForm) {
     const submitButton = waitlistForm.querySelector('button[type="submit"]');
-    submitButton.addEventListener('click', async function (e) {
+    submitButton.addEventListener("click", async function (e) {
       e.preventDefault();
       e.stopPropagation();
 
       // Validate name
-      const nameField = document.getElementById('name');
+      const nameField = document.getElementById("name");
       const namePattern = /^[A-Za-z\s]+$/;
-      if (!nameField.value.trim() || !namePattern.test(nameField.value.trim())) {
-        alert('Please enter a valid name (letters and spaces only).');
+      if (
+        !nameField.value.trim() ||
+        !namePattern.test(nameField.value.trim())
+      ) {
+        alert("Please enter a valid name (letters and spaces only).");
         nameField.focus();
         return;
       }
 
       // Validate email
-      const emailField = document.getElementById('email');
+      const emailField = document.getElementById("email");
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailField.value.trim() || !emailPattern.test(emailField.value.trim())) {
-        alert('Please enter a valid email address.');
+      if (
+        !emailField.value.trim() ||
+        !emailPattern.test(emailField.value.trim())
+      ) {
+        alert("Please enter a valid email address.");
         emailField.focus();
         return;
       }
 
       // Validate dropdown and radio
-      const interest = document.getElementById('interest');
+      const interest = document.getElementById("interest");
       if (!interest.value) {
-        alert('Please select a sustainable habit you are most interested in tracking.');
+        alert(
+          "Please select a sustainable habit you are most interested in tracking."
+        );
         interest.focus();
         return;
       }
 
-      const interestLevel = document.querySelector('input[name="interestLevel"]:checked');
+      const interestLevel = document.querySelector(
+        'input[name="interestLevel"]:checked'
+      );
       if (!interestLevel) {
-        alert('Please select how excited you are to try Grounded.');
+        alert("Please select how excited you are to try Grounded.");
         return;
       }
 
@@ -161,24 +177,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Get reCAPTCHA token and submit the form
       try {
-        const recaptchaToken = await grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITE_KEY, { action: 'submit' });
-        formDataObj['g-recaptcha-response'] = recaptchaToken;
+        const recaptchaToken = await grecaptcha.execute(
+          import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+          { action: "submit" }
+        );
+        formDataObj["g-recaptcha-response"] = recaptchaToken;
         submitButton.disabled = true;
 
-        const response = await fetch('https://us-central1-grounded-7832a.cloudfunctions.net/submitForm', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formDataObj),
-        });
+        const response = await fetch(
+          "https://us-central1-grounded-7832a.cloudfunctions.net/submitForm",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formDataObj),
+          }
+        );
 
         if (response.ok) {
           successModal.style.display = "flex";
           waitlistForm.reset();
+
+          // Push event to dataLayer for GTM/GA4
+          window.dataLayer = window.dataLayer || [];
+          dataLayer.push({
+            event: "waitlist_signup",
+            form_id: "waitlist-form",
+            user_interest: formDataObj["interest"],
+            user_excitement: formDataObj["interestLevel"],
+          });
         } else {
-          alert('Failed to submit the form. Please try again.');
+          alert("Failed to submit the form. Please try again.");
         }
       } catch (error) {
-        alert('An error occurred. Please try again later.');
+        alert("An error occurred. Please try again later.");
       } finally {
         submitButton.disabled = false;
       }
@@ -302,12 +333,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Track clicks on buttons or links with data-description, respecting cookie preferences
   document.addEventListener("click", (event) => {
-    const target = event.target.closest("button[data-description], a[data-description]");
+    const target = event.target.closest(
+      "button[data-description], a[data-description]"
+    );
     if (target) {
-      const description = target.getAttribute("data-description") || "No description";
-      const cookiePrefs = JSON.parse(localStorage.getItem("cookieConsent") || '{}');
+      const description =
+        target.getAttribute("data-description") || "No description";
+      const cookiePrefs = JSON.parse(
+        localStorage.getItem("cookieConsent") || "{}"
+      );
       if (cookiePrefs.analytics) {
-        logEvent(analytics, 'button_click', { button_description: description });
+        logEvent(analytics, "button_click", {
+          button_description: description,
+        });
       }
       console.log(`Event logged: ${description}`);
     }
@@ -315,8 +353,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Debug log for checking if reCAPTCHA is loaded
-if (typeof grecaptcha === 'undefined') {
-  console.error('reCAPTCHA script not loaded. Ensure the script is included in index.html.');
+if (typeof grecaptcha === "undefined") {
+  console.error(
+    "reCAPTCHA script not loaded. Ensure the script is included in index.html."
+  );
 } else {
-  console.log('reCAPTCHA script loaded successfully.');
+  console.log("reCAPTCHA script loaded successfully.");
 }
